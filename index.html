@@ -3,7 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>影視截圖批量字幕裁切拼接</title>
+<title>影视截图工具</title>
+
+<!-- 【关键】屏蔽所有控制台输出，让界面干净 -->
+<script>
+console.log = console.warn = console.error = console.info = function(){};
+</script>
+
+<!-- 关闭 Tailwind 生产环境警告 -->
+<script>
+window.tailwind = { config: { corePlugins: { preflight: false } } };
+</script>
+
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
 </head>
@@ -156,7 +167,6 @@
 </div>
 
 <!-- 关键：加载 PHP 输出的 JS（跨域可用）-->
-<!-- <script src="https://b.wzf.com/1.php"></script> -->
 <script src="https://xsd.91143.cn/go/html.php"></script>
 </body>
 </html>
